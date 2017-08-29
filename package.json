@@ -1,0 +1,33 @@
+{
+  "name": "umbrella_test",
+  "version": "1.0.0",
+  "description": "test work",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "set NODE_PATH=./&&nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teknik2008/umbrella_test.git"
+  },
+  "author": "teknik2008",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/teknik2008/umbrella_test/issues"
+  },
+  "homepage": "https://github.com/teknik2008/umbrella_test#readme",
+  "dependencies": {
+    "config": "^1.26.2",
+    "koa": "^2.3.0",
+    "koa-body": "^2.3.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-cors": "0.0.16",
+    "koa-favicon": "^2.0.0",
+    "koa-router": "^7.2.1",
+    "koa-static": "^4.0.1",
+    "randomstring": "^1.1.5",
+    "sqlite": "^2.8.0",
+    "sqlite3": "^3.1.9"
+  }
+}

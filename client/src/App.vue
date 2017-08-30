@@ -1,14 +1,7 @@
 <template>
   <div id="app">
     <img src="./assets/logo.png">
-    <!-- <form action="" @submit.prevent="submit">
-            <input type="text" v-model="form.values.url" placeholder="введите url для сокращения">
-            <input type="text" v-model="form.values.short" placeholder="введите желаемое окончание ссылки">
-            <input type="text" v-model="form.values.limit" placeholder="количество переходов">
-            <button type="submit">сократить ссылку {{form.errors.url}}</button>
-            <el-button>Default Button</el-button>
-          </form> -->
-    <el-form label-position="left" :rules="form.rules" label-width="240px" :model="form.values" ref="urlForm">
+    <el-form label-position="left" class="form" :qrules="form.rules" label-width="240px" :model="form.values" ref="urlForm">
       <el-form-item label="Укажите ссылку для сокращения" prop="url">
         <el-input v-model="form.values.url"></el-input>
       </el-form-item>
@@ -19,7 +12,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="16">
-          <el-form-item v-if="form.userCheck.short" label="/" label-width="20px" prop="short">
+          <el-form-item v-if="form.userCheck.short" :label="domain+'/'" label-width="130px" prop="short">
             <el-input v-model="form.values.short"></el-input>
           </el-form-item>
         </el-col>
@@ -38,10 +31,17 @@
       </el-row>
       <el-row>
         <el-col :span="16">
-          <el-button type="primary" @click="submit">Submit</el-button>
+          <el-button type="primary" @click="submit">Сократить</el-button>
           <!-- <button @click="submit">сократить ссылку {{form.errors.url}}</button> -->
         </el-col>
       </el-row>
+    <el-card v-if="createUrl" class="box-card">
+      <div>Ваша ссылка: {{createUrl}} </div>
+      <div>
+        <el-button  @click="openInNewTab(createUrl)">Перейти</el-button>
+      </div>
+
+    </el-card>
     </el-form>
   </div>
 </template>
@@ -51,20 +51,29 @@ import axios from 'axios'
 
 import config from './config_app'
 
-axios.defaults['withCredentials'] = true;
 let lo = console.log
+
+axios.defaults['withCredentials'] = true;
+axios.interceptors.response.use((response) => {
+  return response;
+}, function(error) {
+
+  return Promise.reject(error.response);
+});
 
 export default {
   name: 'app',
   data() {
     return {
+      createUrl: false,
+      domain:config.domain,
       form: {
         userCheck: {
           short: false,
           limit: false
         },
         values: {
-          url: 'https://github.com/vuejs/vue-cli',
+          url: 'htt5ps://github.com/vuejs/vue-cli',
           short: '',
           limit: 1,
         },
@@ -85,34 +94,58 @@ export default {
           },
           ],
           short: [
-            { required: true, message: 'А какое окончание нужно?',rigger: 'blur'}
+            { required: true, message: 'А какое окончание нужно?', rigger: 'blur' }
           ],
           limit: [
-            { required: true, message: 'Так сколько раз нужно использовать?'},
-            { required: true, message: 'Ну это не число.',pattern:/^\d+$/}
+            { required: true, message: 'Так сколько раз нужно использовать?' },
+            { required: true, message: 'Ну это не число.', pattern: /^\d+$/ }
           ],
         }
       }
     }
   },
   methods: {
+    showError(title, msg) {
+      this.$notify.error({
+        title,
+        message: msg
+      });
+    },
+    openInNewTab(url) {
+      var win = window.open(url, '_blank');
+      win.focus();
+    },
+    showInfo(title, msg) {
+      this.$notify.success({
+        title,
+        message: msg,
+        type: 'success'
+      });
+    },
     submit(e) {
       this.$refs.urlForm.validate((valid) => {
         let { url, short, limit } = this.form.values;
         let userCheck = this.form.userCheck;
+        limit = userCheck.limit ? limit : -1
         let { url: urlReq, method } = config.urls.submit
+
         if (!(method in axios)) {
           throw Error('метод запроса не найден')
         }
-        axios[method](urlReq, { form: { url, short, limit } }).then(result => {
-            
+        axios.post(urlReq, { form: { url, short, limit } }).then(result => {
+          let data = result.data;
+          if (data.success == true) {
+            let url = config.domain + data.response.url
+            this.createUrl = url
+          }
+
+          this.showInfo('Успех', 'Ссылка создана')
         }).catch(err => {
 
+          let msg = err.data.error.msg
+          this.showError('Ошибка', err.data.error.msg)
         })
       })
-
-
-
     }
   }
 }
@@ -126,5 +159,12 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+.form{
+  width: 980px;
+  margin: auto
+}
+.box-card{
+  margin-top: 20px
 }
 </style>

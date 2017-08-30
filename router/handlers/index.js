@@ -4,7 +4,7 @@ const config = require('config')
 
 const lo = require('_libs/lo')(module);
 
-lo(config)
+
 /**
  * Валидации строки на соответсвие url
  * @param {string} url - строка для проверки
@@ -112,7 +112,7 @@ async function isLimited({ limit, id }) {
         return true;
     }
     if(limit>1){
-        state=await updateLimitToDb(id,limit-1)
+        state=await updateLimitToDb(id,limit-1);
     }else{
         state=await removeFromDb(id)
     }
@@ -134,7 +134,7 @@ async function getShortUrl(shortUrl) {
         return selected;
     }
     let isRemoved = await isRemoveRow(selected);
-    let isLimitEnd = await isLimited(selected);
+    
     if (isRemoved) {
         return false;
     }
@@ -173,7 +173,7 @@ exports.createNewShortUrl = async (ctx) => {
                 msg: 'Данный url уже занят'
             }
         }
-        ctx.status = 200
+        ctx.status = 400
         return
     };
     let saveStatus = await saveToDb(urlStr, shortUrl, limit);
@@ -197,8 +197,14 @@ exports.createNewShortUrl = async (ctx) => {
 exports.getFullUrlFromShort = async (ctx, next) => {
     let reqUrl = ctx.request.url;
     let getShort = await getShortUrl(reqUrl);
+    
     if (!getShort) {
-        await next()
+        ctx.redirect('/404.html')
+        return;
+    }
+    let isLimitEnd = await isLimited(getShort);
+    if(!isLimitEnd){
+        ctx.redirect('/404.html')
         return;
     }
     let { url } = getShort

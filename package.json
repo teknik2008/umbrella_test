@@ -4,8 +4,8 @@
   "description": "test work",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "set NODE_PATH=./&&nodemon index.js"
+    "dev": "set NODE_PATH=./&&nodemon index.js",
+    "start": "set NODE_PATH=./&&node index.js"
   },
   "repository": {
     "type": "git",

@@ -5,7 +5,7 @@ const path = require('path');
 const config = require('config');
 const router=require('./router')
 const db =require('./utils/db')
-let lo = require('_libs/lo')(module);
+//let lo = require('_libs/lo')(module);
 
 const app = new Koa();
 
@@ -21,9 +21,9 @@ app.use(router.routes());
 
 db().then(state=>{
     app.listen(config.site.port); 
-    lo('Процесc запущен '+config.site.domain)
+    //lo('Процесc запущен '+config.site.domain)
 }).catch(err=>{
-    lo(err)
+    //lo(err)
 })
 
 

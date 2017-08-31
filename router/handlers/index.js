@@ -2,7 +2,7 @@ const db = require('sqlite');
 const randomstring = require("randomstring");
 const config = require('config')
 
-const lo = require('_libs/lo')(module);
+// const lo = require('_libs/lo')(module);
 
 
 /**
@@ -51,7 +51,7 @@ async function saveToDb(urlStr, shortUrl, limit = -1) {
         await db.run(sqlTpl, insertData);
         return true;
     } catch (e) {
-        lo(e);
+        //lo(e);
         return false;
     }
 }
@@ -65,7 +65,7 @@ async function updateLimitToDb(id,limit){
         await db.run(sqlTpl,updateData);
         return true;
     }catch(e){
-        lo(e)
+        //lo(e)
         return false;
     }
 }

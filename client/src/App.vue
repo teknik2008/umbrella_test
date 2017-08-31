@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <img src="./assets/logo.png">
-    <el-form label-position="left" class="form" :qrules="form.rules" label-width="240px" :model="form.values" ref="urlForm">
+    <el-form label-position="left" class="form" :rules="form.rules" label-width="240px" :model="form.values" ref="urlForm">
       <el-form-item label="Укажите ссылку для сокращения" prop="url">
         <el-input v-model="form.values.url"></el-input>
       </el-form-item>
@@ -12,7 +12,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="16">
-          <el-form-item v-if="form.userCheck.short" :label="domain+'/'" label-width="130px" prop="short">
+          <el-form-item v-if="form.userCheck.short" :label="domain+'/'" label-width="300px" prop="short" class="text-right">
             <el-input v-model="form.values.short"></el-input>
           </el-form-item>
         </el-col>
@@ -73,7 +73,7 @@ export default {
           limit: false
         },
         values: {
-          url: 'htt5ps://github.com/vuejs/vue-cli',
+          url: '',
           short: '',
           limit: 1,
         },
@@ -124,6 +124,7 @@ export default {
     },
     submit(e) {
       this.$refs.urlForm.validate((valid) => {
+        if(!valid)return;
         let { url, short, limit } = this.form.values;
         let userCheck = this.form.userCheck;
         limit = userCheck.limit ? limit : -1
@@ -166,5 +167,9 @@ export default {
 }
 .box-card{
   margin-top: 20px
+}
+
+.text-right{
+  text-align: right !important;
 }
 </style>

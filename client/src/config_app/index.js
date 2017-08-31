@@ -1,4 +1,4 @@
-let base='http://localhost:8000';
+let base=location.origin+'';
 
 export  default {
     domain:base,
